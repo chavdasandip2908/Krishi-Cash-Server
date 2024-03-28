@@ -1,5 +1,6 @@
 // src/server.js
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./models/db');
 const userRoutes = require('./routes/userRoutes');
@@ -8,13 +9,14 @@ const cropIncomeRouter = require('./routes/cropIncomeRouter');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 const secretKey = process.env.TOKEN_SECRET_KEY;
 
 // Connect to MongoDB
 connectDB();
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
 
 function authenticateToken(req, res, next) {

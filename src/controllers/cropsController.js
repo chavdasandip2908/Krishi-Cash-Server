@@ -1,20 +1,26 @@
 const Crop = require('../models/cropsModel');
+const User = require('../models/userModel');
 
 
 const createCrop = async (req, res) => {
     try {
-        const { croptype, year, name, image } = req.body;
+        const { type, year, name, image, userid } = req.body;
 
         // Check if all required fields are provided
-        if (!croptype || !year || !name || !image) {
+        if (!type || !year || !name || !image, !userid) {
             return res.status(400).json({ error: 'All fields are required' });
         }
+        // check User is exist or not 
+        let userExist = await User.findById(userid);
+        if (!userExist) return res.status(401).send("User doesn't exists!");
+
         // if Crops Already Exist
-        const existingCrop = await Crop.findOne({ year, name });
+        const existingCrop = await Crop.findOne({ year, name, type, userid });
         if (existingCrop) {
             return res.status(400).json({ error: 'Crop already exists' });
         }
-        const newCrop = new Crop({ croptype, year, name, image });
+        const newCrop = new Crop({ type, year, name, image, userid });
+
         await newCrop.save();
         res.status(201).json({ message: 'Crop created successfully', crop: newCrop });
 
@@ -97,7 +103,8 @@ const deleteCrop = async (req, res) => {
 const getAllCrops = async (req, res) => {
     try {
         // Get all crops
-        const crops = await Crop.find();
+        const { userid } = req.query;
+        const crops = await Crop.find({ userid });
         res.status(200).json(crops);
     } catch (error) {
         console.error('Error fetching crops:', error);
