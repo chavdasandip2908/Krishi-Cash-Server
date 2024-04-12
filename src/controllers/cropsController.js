@@ -1,10 +1,15 @@
+const CropIncome = require('../models/cropIncomeModel');
 const Crop = require('../models/cropsModel');
 const User = require('../models/userModel');
 
+const decodeToken = (r) => {
+    return r.user.userId
+}
 
 const createCrop = async (req, res) => {
     try {
-        const { type, year, name, image, userid } = req.body;
+        const { type, year, name, image } = req.body;
+        const userid = decodeToken(req);
 
         // Check if all required fields are provided
         if (!type || !year || !name || !image, !userid) {
@@ -103,7 +108,7 @@ const deleteCrop = async (req, res) => {
 const getAllCrops = async (req, res) => {
     try {
         // Get all crops
-        const { userid } = req.query;
+        const userid = decodeToken(req);
         const crops = await Crop.find({ userid });
         res.status(200).json(crops);
     } catch (error) {
@@ -117,7 +122,6 @@ const getCropById = async (req, res) => {
         const { id } = req.params;
 
         // Get crop by ID
-        // here get Crop and CropIncome Data then send in response
         const crop = await Crop.findById(id).populate('cropsincomeid');
 
         if (!crop) {
@@ -130,5 +134,7 @@ const getCropById = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error', error: error });
     }
 };
+
+
 
 module.exports = { createCrop, updateCropIncomeId, updateCrop, deleteCrop, getAllCrops, getCropById };

@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 function authenticateToken(req, res, next) {
   // Get the token from the authorization header
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers.authorization;
   const token = authHeader && authHeader.split(' ')[1];
 
   // If no token provided, return 401 Unauthorized
@@ -42,13 +42,13 @@ function authenticateToken(req, res, next) {
 
 app.get('/protected', authenticateToken, (req, res) => {
   // If token is valid, return some protected data
-  res.json({ message: 'Protected data accessed successfully', user: req.user });
+  res.json({ message: 'Protected data accessed successfully', user: req.user.userId });
 });
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/crops', cropsRouter);
-app.use('/api/cropincomes', cropIncomeRouter);
+app.use('/api/crops', authenticateToken, cropsRouter);
+app.use('/api/cropincomes', authenticateToken, cropIncomeRouter);
 
 // Start server
 app.listen(PORT, () => {

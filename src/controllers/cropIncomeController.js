@@ -7,35 +7,27 @@ const createCropIncome = async (req, res) => {
     try {
         const { cropid, date, price, weight } = req.body;
 
+        // Create a new CropIncome instance
         const newCropIncome = new CropIncome({ date, price, weight });
-        console.log(new mongoose.Types.ObjectId);
 
-        const cropsincomeid = new mongoose.Types.ObjectId;
+        // Save the new CropIncome instance
+        await newCropIncome.save();
 
-        // Check if crop exists
+        // Get the existing crop by ID
         const existingCrop = await Crop.findById(cropid);
         if (!existingCrop) {
             return res.status(404).json({ error: 'Crop not found' });
         }
 
-        // before push id check id is alredy exist
-        // let incomeIds = existingCrop.cropsincomeid;
-        // for (let i = 0; i < incomeIds.length; i++) {
-        //     if (String(incomeIds[i]) === String(cropsincomeid)) {
-        //         return res.status(409).json({ error: "This Income Id is already associated with this crop" })
-        //     }
-        // }
+        // Push the ID of the newly created CropIncome into cropsincomeid array
+        existingCrop.cropsincomeid.push(newCropIncome._id);
 
-        // Push the new ID into cropsincomeid array
-        existingCrop.cropsincomeid.push(cropsincomeid);
-
-        // Save the updated crop
+        // Save the updated crop with the new CropIncome ID
         await existingCrop.save();
-        await newCropIncome.save();
-        res.status(201).json({ message: 'crops income added' });
 
+        res.status(201).json({ message: 'Cropincome added successfully ' });
     } catch (error) {
-        console.error('Error registering Crop:', error);
+        console.error('Error adding crop income:', error);
         res.status(500).json({ message: 'Internal Server Error', error: error });
     }
 };
