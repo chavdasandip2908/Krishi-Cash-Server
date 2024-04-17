@@ -17,7 +17,7 @@ const createCrop = async (req, res) => {
         }
         // check User is exist or not 
         let userExist = await User.findById(userid);
-        if (!userExist) return res.status(401).send("User doesn't exists!");
+        if (!userExist) return res.status(401).send({ error: "User doesn't exists!" });
 
         // if Crops Already Exist
         const existingCrop = await Crop.findOne({ year, name, type, userid });
@@ -32,7 +32,7 @@ const createCrop = async (req, res) => {
 
     } catch (error) {
         console.error('Error registering Crop:', error);
-        res.status(500).json({ message: 'Internal Server Error', error: error });
+        res.status(500).json({ error: 'Internal Server Error', error: error });
     }
 };
 
@@ -51,7 +51,7 @@ const updateCropIncomeId = async (req, res) => {
         let incomeIds = existingCrop.cropsincomeid;
         for (let i = 0; i < incomeIds.length; i++) {
             if (String(incomeIds[i]) === String(cropsincomeid)) {
-                return res.status(409).json({ error: "This Income Id is already associated with this crop" })
+                return res.status(409).json({ error: "This Income   Id is already associated with this crop" })
             }
         }
 
@@ -64,7 +64,7 @@ const updateCropIncomeId = async (req, res) => {
         res.status(200).json({ message: 'Crop updated successfully', crop: existingCrop });
     } catch (error) {
         console.error('Error updating Crop:', error);
-        res.status(500).json({ message: 'Internal Server Error', error: error });
+        res.status(500).json({ error: 'Internal Server Error', error: error });
     }
 };
 
@@ -83,7 +83,7 @@ const updateCrop = async (req, res) => {
         res.status(200).json({ message: 'Crop updated successfully', crop: updatedCrop });
     } catch (error) {
         console.error('Error updating Crop:', error);
-        res.status(500).json({ message: 'Internal Server Error', error: error });
+        res.status(500).json({ error: 'Internal Server Error', error: error });
     }
 };
 
@@ -113,7 +113,7 @@ const getAllCrops = async (req, res) => {
         res.status(200).json(crops);
     } catch (error) {
         console.error('Error fetching crops:', error);
-        res.status(500).json({ message: 'Internal Server Error', error: error });
+        res.status(500).json({ error: 'Internal Server Error', error: error });
     }
 };
 
@@ -131,7 +131,7 @@ const getCropById = async (req, res) => {
         res.status(200).json(crop);
     } catch (error) {
         console.error('Error fetching crop:', error);
-        res.status(500).json({ message: 'Internal Server Error', error: error });
+        res.status(500).json({ error: 'Internal Server Error', error: error });
     }
 };
 
