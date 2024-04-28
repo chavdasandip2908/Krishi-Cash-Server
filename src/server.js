@@ -26,13 +26,13 @@ function authenticateToken(req, res, next) {
 
   // If no token provided, return 401 Unauthorized
   if (!token) {
-    return res.status(401).json({ message: 'Invalid token',code:'NULL_TOKEN' });
+    return res.status(401).json({ message: 'token not found so signin again', code: 'NULL_TOKEN' });
   }
 
   // Verify token
   jwt.verify(token, secretKey, (err, decoded) => {
     if (err) {
-      return res.status(403).json({ message: 'Invalid token' ,code:'INVALID_TOKEN' });
+      return res.status(403).json({ message: 'invalid token', code: 'INVALID_TOKEN' });
     }
     // If token is valid, set decoded token data to the request object
     req.user = decoded;
